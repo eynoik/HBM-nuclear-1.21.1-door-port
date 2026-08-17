@@ -1,0 +1,87 @@
+name: Build HBM Doors
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Java 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '9.2.1'
+
+      - name: Generate resource JSON
+        shell: bash
+        run: python tools/generate_resources.py
+
+      - name: Bootstrap preserved HBM assets
+        if: github.event_name != 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --filter=blob:none --no-checkout https://github.com/mlbv/Hbm-s-Nuclear-Tech-GIT-Custom-1.12.2.git /tmp/hbm-upstream
+          mapfile -t HBM_FILES < <(python tools/bootstrap_assets.py --sources)
+          git -C /tmp/hbm-upstream checkout 900ca58f1b08e915903913e469e719f5fccd1134 -- "${HBM_FILES[@]}" LICENSE
+          python tools/bootstrap_assets.py /tmp/hbm-upstream
+          if [ -f src/main/resources/assets/hbmdoors/textures/models/doors/blast/bllast_door_block.png ]; then
+            mv src/main/resources/assets/hbmdoors/textures/models/doors/blast/bllast_door_block.png src/main/resources/assets/hbmdoors/textures/models/doors/blast/blast_door_block.png
+          fi
+          cp /tmp/hbm-upstream/LICENSE LICENSE
+          python tools/verify_preserved_assets.py
+
+          if [ ! -f gradle/wrapper/gradle-wrapper.jar ]; then
+            gradle wrapper --gradle-version 9.2.1
+          fi
+
+          if [ -n "$(git status --porcelain -- src/main/resources LICENSE gradle gradlew gradlew.bat)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add src/main/resources LICENSE gradle gradlew gradlew.bat
+            git commit -m "Bootstrap preserved HBM door assets and resources"
+            git push
+          fi
+
+      - name: Verify assets
+        shell: bash
+        run: python tools/verify_preserved_assets.py
+
+      - name: Build
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle build --no-daemon --stacktrace 2>&1 | tee build.log
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
+          if-no-files-found: warn
+          retention-days: 3
+
+      - name: Upload mod jar
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hbm-nuclear-door-port
+          path: build/libs/*.jar
+          if-no-files-found: error
+          retention-days: 14
