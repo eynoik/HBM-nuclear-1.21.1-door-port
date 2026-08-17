@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "hbmdoors:models/doors/sliding_gate_door"
+  }
+}

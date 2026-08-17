@@ -1,0 +1,170 @@
+{
+  "round_airlock.move": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/garage_move",
+        "stream": false
+      }
+    ]
+  },
+  "round_airlock.stop": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/garage_stop",
+        "stream": false
+      }
+    ]
+  },
+  "sliding_seal.move": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/doormove2",
+        "stream": false
+      }
+    ]
+  },
+  "sliding_seal.stop": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/metal_stop1",
+        "stream": false
+      }
+    ]
+  },
+  "wgh.move": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/door_wgh_start",
+        "stream": false
+      }
+    ]
+  },
+  "wgh.stop": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/door_wgh_stop",
+        "stream": false
+      }
+    ]
+  },
+  "wgh_big.move": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/door_wgh_big_start",
+        "stream": false
+      }
+    ]
+  },
+  "wgh_big.stop": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/door_wgh_big_stop",
+        "stream": false
+      }
+    ]
+  },
+  "alarm6": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/alarm6",
+        "stream": false
+      }
+    ]
+  },
+  "qe.opening": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/doorslide_opening1",
+        "stream": false
+      }
+    ]
+  },
+  "qe.opened": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/doorslide_opened1",
+        "stream": false
+      }
+    ]
+  },
+  "qe.shut": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/doorshut_1",
+        "stream": false
+      }
+    ]
+  },
+  "hatch.open": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/hatch_open1",
+        "stream": false
+      }
+    ]
+  },
+  "door.lever": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/lever1",
+        "stream": false
+      }
+    ]
+  },
+  "special.transition_seal": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/transition_seal_open",
+        "stream": false
+      }
+    ]
+  },
+  "special.reactor_start": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/reactorstart",
+        "stream": false
+      }
+    ]
+  },
+  "special.reactor_stop": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/reactorstop",
+        "stream": false
+      }
+    ]
+  },
+  "special.vault_scrape": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/vaultscrapenew",
+        "stream": false
+      }
+    ]
+  },
+  "special.vault_thud": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/vaultthudnew",
+        "stream": false
+      }
+    ]
+  },
+  "special.silo_open": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/siloopen",
+        "stream": false
+      }
+    ]
+  },
+  "special.silo_close": {
+    "sounds": [
+      {
+        "name": "hbmdoors:block/doors/siloclose",
+        "stream": false
+      }
+    ]
+  }
+}

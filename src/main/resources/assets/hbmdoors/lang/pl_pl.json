@@ -1,0 +1,17 @@
+{
+  "block.hbmdoors.round_airlock_door": "Okrągłe drzwi grodziowe",
+  "block.hbmdoors.sliding_seal_door": "Przesuwne drzwi uszczelniające",
+  "block.hbmdoors.sliding_gate_door": "Przesuwna brama",
+  "block.hbmdoors.secure_access_door": "Drzwi bezpiecznego dostępu",
+  "block.hbmdoors.hatch": "Właz",
+  "block.hbmdoors.fire_door": "Drzwi przeciwpożarowe",
+  "block.hbmdoors.qe_sliding_door": "Przesuwne drzwi QE",
+  "block.hbmdoors.qe_containment_door": "Drzwi osłony QE",
+  "block.hbmdoors.water_door": "Drzwi wodoszczelne",
+  "block.hbmdoors.large_vehicle_door": "Duże drzwi pojazdowe",
+  "block.hbmdoors.transition_seal": "Śluza przejściowa",
+  "block.hbmdoors.blast_door": "Drzwi przeciwwybuchowe",
+  "block.hbmdoors.sliding_blast_door": "Przesuwne drzwi przeciwwybuchowe",
+  "block.hbmdoors.vault_door": "Drzwi skarbca",
+  "block.hbmdoors.silo_hatch": "Właz silosu"
+}
