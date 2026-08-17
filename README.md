@@ -1,6 +1,6 @@
 # HBM Nuclear Door Port — NeoForge 1.21.1
 
-Standalone port of the animated HBM Nuclear Tech doors. This repository is intentionally separate from Battle Towers.
+Standalone port of the animated HBM Nuclear Tech doors. **This repository is intentionally separate from Battle Towers; HBM development belongs here only.**
 
 ## Ported doors
 
@@ -23,7 +23,7 @@ Standalone port of the animated HBM Nuclear Tech doors. This repository is inten
 - Vault Door — original pull-out / roll-away transform math
 - Silo Hatch — original `hatch.dae` keyframes
 
-All doors support right-click toggling and redstone. Vanilla-only standalone recipes and item icons are included.
+All doors support right-click toggling and redstone. Vanilla-only standalone recipes and item models are included for all 15 doors.
 
 ## Preservation rule
 The original HBM OBJ/DAE/PNG/OGG assets are copied unchanged. The 1.21.1 code replaces only the old GL11/TESR transport layer with NeoForge BlockEntity renderers.
