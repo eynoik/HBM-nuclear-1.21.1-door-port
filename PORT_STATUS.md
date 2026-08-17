@@ -9,5 +9,6 @@
 - Added Vault Door with original pull-out/slide/roll math.
 - Added Silo Hatch with original Collada model/animation.
 - Added standalone vanilla recipes and item models for all 15 doors.
+- Special-door source is validated through this repository's own NeoForge 1.21.1 CI; Battle Towers is not used as a build workspace.
 
 Runtime validation still matters for visual orientation, Collada matrix parity and the very large Transition Seal multiblock.
