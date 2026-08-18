@@ -125,11 +125,11 @@ public final class HbmDoorsPort {
         LegacyDoorType.LARGE_VEHICLE.sounds(null, null, ROUND_AIRLOCK_MOVE, null, ROUND_AIRLOCK_STOP, ROUND_AIRLOCK_STOP);
     }
 
-    /** One gameplay-oriented durability profile shared by every ported HBM door. */
+    /** Shared durability for every ported HBM door; slightly tougher than vanilla obsidian. */
     private static BlockBehaviour.Properties uniformDoorProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
-                .strength(60F, 1_500F)
+                .strength(55F, 1_300F)
                 .requiresCorrectToolForDrops()
                 .noOcclusion()
                 .dynamicShape();
