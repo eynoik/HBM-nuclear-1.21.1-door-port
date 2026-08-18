@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 /**
  * Sound lifecycle glue which the old HBM AudioWrapper used to provide for us.
  * Vanilla positional sounds keep playing after their source block disappears, so explicitly
- * stop the HBM door samples when a door is broken.  The stop packet is resource-scoped rather
+ * stop the HBM door samples when a door is broken. The stop packet is resource-scoped rather
  * than positional (vanilla has no positional stop packet), therefore it is only sent to players
  * close enough to have heard the destroyed door in the first place.
  */
@@ -64,7 +64,7 @@ public final class DoorLifecycleEvents {
 
     /**
      * HBM 1.12's Transition Seal only owns one transitionSealOpen sample; the generic door
-     * audio path re-used the movement sample for the opposite direction.  The port initially
+     * audio path re-used the movement sample for the opposite direction. The port initially
      * only emitted it for OPENING, which made closing effectively silent/broken.
      */
     @SubscribeEvent
@@ -87,13 +87,15 @@ public final class DoorLifecycleEvents {
         for (ServerPlayer player : level.players()) {
             if (!near(player, pos)) continue;
             for (Supplier<SoundEvent> sound : DOOR_SOUNDS) {
-                player.connection.send(new ClientboundStopSoundPacket(sound.get().location(), SoundSource.BLOCKS));
+                ResourceLocation soundId = BuiltInRegistries.SOUND_EVENT.getKey(sound.get());
+                player.connection.send(new ClientboundStopSoundPacket(soundId, SoundSource.BLOCKS));
             }
         }
     }
 
     private static void stopSound(ServerLevel level, BlockPos pos, Supplier<SoundEvent> sound) {
-        ClientboundStopSoundPacket packet = new ClientboundStopSoundPacket(sound.get().location(), SoundSource.BLOCKS);
+        ResourceLocation soundId = BuiltInRegistries.SOUND_EVENT.getKey(sound.get());
+        ClientboundStopSoundPacket packet = new ClientboundStopSoundPacket(soundId, SoundSource.BLOCKS);
         for (ServerPlayer player : level.players()) {
             if (near(player, pos)) player.connection.send(packet);
         }
