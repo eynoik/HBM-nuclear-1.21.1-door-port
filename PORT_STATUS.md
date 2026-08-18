@@ -1,5 +1,12 @@
 # Port status
 
+## 0.3.5-alpha.1
+- Restores empty-hand access behavior from the pinned HBM 1.12.2 fork instead of allowing every door to toggle by hand.
+- The normal `sliding_blast_door` remains empty-hand operable because its original `TileEntitySlidingBlastDoor#canAccess` explicitly allowed unlocked access.
+- The other 14 currently ported doors deny empty-hand activation, matching their original `TileEntityLockableBase` / `BlockDoorGeneric` access path.
+- Existing redstone behavior is unchanged; HBM key/pin/lockpick items are not yet ported.
+- Exact provenance and the per-door classification are recorded in `MANUAL_ACCESS.md`.
+
 ## 0.3.4-alpha.1
 - Reworks client movement-loop cleanup so a loop is valid only while the exact door BlockEntity is still installed at its world position.
 - Explicitly stops and removes stale loop instances from `DoorSoundController` instead of trusting `BlockEntity#isRemoved()` alone.
