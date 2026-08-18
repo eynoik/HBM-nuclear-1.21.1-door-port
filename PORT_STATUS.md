@@ -1,5 +1,13 @@
 # Port status
 
+## 0.3.3-alpha.1
+- Stops HBM door sound samples for nearby clients when an HBM door is broken, preventing positional audio from lingering after the multiblock is removed.
+- Restores Transition Seal closing movement audio using the original HBM transition sample.
+- Replaces the blank QE Containment Door and Sliding Blast Door inventory sprites with explicit 32x32 icons.
+- Adds dedicated break/hit particle sprite bindings for all 15 ported doors.
+- Fixes the NeoForge 1.21.1 SoundEvent lookup used by the sound cleanup path.
+- Alpha builds from `main` are published automatically as GitHub Pre-releases with the compiled JAR attached.
+
 ## 0.3.2-alpha.1
 - Restored dedicated 32x32 inventory renders for all 15 doors; the temporary `block_steel` placeholder is gone.
 - Added a dedicated HBM Doors creative tab containing all ported doors.
