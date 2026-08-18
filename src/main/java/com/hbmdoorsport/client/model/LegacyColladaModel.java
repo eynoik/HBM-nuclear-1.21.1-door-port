@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
+import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -59,8 +60,16 @@ public final class LegacyColladaModel {
         ps.pushPose();
         boolean hidden=false;
         KeyTransform[] arr=animation.get(n.name);
-        if(arr!=null&&arr.length>0){int a=Math.min(first,arr.length-1),b=Math.min(next,arr.length-1);hidden=arr[a].hidden;arr[a].applyInterpolated(arr[b],inter,ps);}
-        else if(n.base!=null)n.base.apply(ps);
+        if(arr!=null&&arr.length>0){
+            int a=Math.min(first,arr.length-1),b=Math.min(next,arr.length-1);
+            hidden=arr[a].hidden;
+            arr[a].applyInterpolated(arr[b],inter,ps);
+        } else if(n.base!=null) {
+            // HBM 1.12 multiplied static node matrices directly. Do not decompose them into
+            // TRS: after flipMatrix that loses the original translation/pivot basis and shifts
+            // nested pieces (especially Transition Seal and Silo Hatch).
+            ps.mulPoseMatrix(n.base);
+        }
         Geometry g=geometry.get(n.geometry);
         if(g!=null&&!hidden)g.render(ps.last(),out,light,overlay);
         for(ModelNode c:n.children)renderNode(c,ps,out,light,overlay,first,next,inter);
@@ -77,7 +86,10 @@ public final class LegacyColladaModel {
     private static ModelNode parseNode(Element e) {
         ModelNode n=new ModelNode(); n.name=e.getAttribute("name");
         for(Element c:children(e)) {
-            if("transform".equals(c.getAttribute("sid"))) n.base=new KeyTransform(flipMatrix(parseFloats(c.getTextContent())));
+            if("transform".equals(c.getAttribute("sid"))) {
+                float[] raw=flipMatrix(parseFloats(c.getTextContent()));
+                if(raw.length==16)n.base=new Matrix4f().set(raw);
+            }
             else if("instance_geometry".equals(c.getTagName())) {String url=c.getAttribute("url");n.geometry=url.startsWith("#")?url.substring(1):url;}
             else if(c.getElementsByTagName("instance_geometry").getLength()>0)n.children.add(parseNode(c));
         }
@@ -126,7 +138,11 @@ public final class LegacyColladaModel {
 
     private static KeyTransform[] parseTransforms(Element anim) {
         String output=outputLocation(anim); if(output==null)return null;
-        for(Element e:children(anim))if(output.equals(e.getAttribute("id"))){float[] f=parseFloatArrayElement(e);KeyTransform[] out=new KeyTransform[f.length/16];for(int i=0;i<out.length;i++){float[] m=new float[16];System.arraycopy(f,i*16,m,0,16);out[i]=new KeyTransform(m);}return out;}
+        for(Element e:children(anim))if(output.equals(e.getAttribute("id"))){
+            float[] f=parseFloatArrayElement(e); KeyTransform[] out=new KeyTransform[f.length/16];
+            for(int i=0;i<out.length;i++){float[] m=new float[16];System.arraycopy(f,i*16,m,0,16);out[i]=new KeyTransform(m);}
+            return out;
+        }
         return null;
     }
 
@@ -151,7 +167,7 @@ public final class LegacyColladaModel {
     private static float clamp(float v,float a,float b){return Math.max(a,Math.min(b,v));}
 
     private static final class RootNode { final List<ModelNode> children=new ArrayList<>(); }
-    private static final class ModelNode { String name="",geometry=""; KeyTransform base; final List<ModelNode> children=new ArrayList<>(); }
+    private static final class ModelNode { String name="",geometry=""; Matrix4f base; final List<ModelNode> children=new ArrayList<>(); }
     private record ParsedAnimation(Map<String,KeyTransform[]> map,int frames) { }
 
     private static final class Geometry {
@@ -182,8 +198,6 @@ public final class LegacyColladaModel {
             m[0]/=xs;m[1]/=xs;m[2]/=xs;m[4]/=ys;m[5]/=ys;m[6]/=ys;m[8]/=zs;m[9]/=zs;m[10]/=zs;
             float[] q=quatFromMatrix(m);qx=q[0];qy=q[1];qz=q[2];qw=q[3];tx=m[3];ty=m[7];tz=m[11];
         }
-        private KeyTransform(float tx,float ty,float tz,float sx,float sy,float sz,float qx,float qy,float qz,float qw){this.tx=tx;this.ty=ty;this.tz=tz;this.sx=sx;this.sy=sy;this.sz=sz;this.qx=qx;this.qy=qy;this.qz=qz;this.qw=qw;}
-        void apply(PoseStack ps){applyValues(ps,tx,ty,tz,sx,sy,sz,qx,qy,qz,qw);}
         void applyInterpolated(KeyTransform b,float t,PoseStack ps){float[] q=slerp(qx,qy,qz,qw,b.qx,b.qy,b.qz,b.qw,t);applyValues(ps,mix(tx,b.tx,t),mix(ty,b.ty,t),mix(tz,b.tz,t),mix(sx,b.sx,t),mix(sy,b.sy,t),mix(sz,b.sz,t),q[0],q[1],q[2],q[3]);}
         private static void applyValues(PoseStack ps,float tx,float ty,float tz,float sx,float sy,float sz,float qx,float qy,float qz,float qw){ps.translate(tx,ty,tz);ps.mulPose(new Quaternionf(qx,qy,qz,qw));ps.scale(sx,sy,sz);}
         private static float len(float a,float b,float c){return (float)Math.sqrt(a*a+b*b+c*c);}
