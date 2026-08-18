@@ -1,7 +1,7 @@
 # HBM Door Port CI
 
 - Result: **success**
-- Source commit: `3e75cdc3f1ad281e8048b3122e68240ff0ea36aa`
+- Source commit: `97490c5a2b0780ae961a735e4626aa9512065978`
 - Java: 21
 - Minecraft: 1.21.1
 - NeoForge: 21.1.235
@@ -70,11 +70,11 @@ Daemon will be stopped at the end of the build
 > Task :testJunit NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1787056190565.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1787057150458.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/build/reports/problems/problems-report.html
 
-BUILD SUCCESSFUL in 32s
+BUILD SUCCESSFUL in 30s
 29 actionable tasks: 6 executed, 20 from cache, 3 up-to-date
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.2.1/userguide/configuration_cache_enabling.html
 ```
