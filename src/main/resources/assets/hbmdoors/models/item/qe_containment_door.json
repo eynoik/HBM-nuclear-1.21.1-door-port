@@ -1,4 +1,6 @@
 {
   "parent": "minecraft:item/generated",
-  "textures": {"layer0": "hbmdoors:item/qe_containment_door"}
+  "textures": {
+    "layer0": "hbmdoors:item/qe_containment_door"
+  }
 }

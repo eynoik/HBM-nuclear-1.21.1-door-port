@@ -1,4 +1,6 @@
 {
   "parent": "minecraft:item/generated",
-  "textures": {"layer0": "hbmdoors:item/blast_door"}
+  "textures": {
+    "layer0": "hbmdoors:item/blast_door"
+  }
 }
