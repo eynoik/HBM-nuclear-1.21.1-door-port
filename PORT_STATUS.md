@@ -1,7 +1,16 @@
 # Port status
 
+## 0.3.2-alpha.1
+- Restored dedicated 32x32 inventory renders for all 15 doors; the temporary `block_steel` placeholder is gone.
+- Added a dedicated HBM Doors creative tab containing all ported doors.
+- Fixed static Collada node transforms to match HBM 1.12: static 4x4 matrices are multiplied directly instead of being decomposed after transposition. This targets the displaced Transition Seal center and shifted/reversed-looking Silo Hatch pieces.
+- Kept the 0.3.1 triangle-to-quad compatibility fix for modern Minecraft entity buffers.
+- Restored Sliding Blast Door movement/end sounds using the same `qe_sliding_opening`, `qe_sliding_opened` and `qe_sliding_shut` samples used by HBM 1.12.
+- Blast Door connected-group behavior from 0.3.1 is retained.
+- Vault Door render and animation path are unchanged.
+
 ## 0.3.1-alpha.1
-- Fixed all 15 inventory icons by moving them back onto a valid item/block atlas sprite (`block_steel`), matching the legacy HBM item-model approach instead of pointing at raw model textures.
+- Fixed the magenta/black inventory failure by temporarily moving item models onto a valid atlas sprite (`block_steel`).
 - Fixed Collada triangle rendering for Transition Seal, Sliding Blast Door and Silo Hatch without changing the original DAE files or animation keyframes.
 - Restored original HBM connected Blast Door behavior: horizontally adjacent segments open and close as one connected group.
 - Connected Blast Door redstone is evaluated across the whole group so one powered segment keeps the group open.

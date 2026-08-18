@@ -10,12 +10,14 @@ import com.hbmdoorsport.door.LegacyDoorType;
 import com.hbmdoorsport.door.SpecialDoorType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,7 +25,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -40,6 +41,7 @@ public final class HbmDoorsPort {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, MODID);
     public static final DeferredRegister<SoundEvent> SOUNDS = DeferredRegister.create(Registries.SOUND_EVENT, MODID);
+    public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static final DeferredBlock<RoundAirlockDoorBlock> ROUND_AIRLOCK_DOOR = BLOCKS.registerBlock(
             "round_airlock_door", RoundAirlockDoorBlock::new, doorProperties());
@@ -63,6 +65,17 @@ public final class HbmDoorsPort {
             SPECIAL_ITEMS.put(type, ITEMS.register(type.id(), () -> new BlockItem(block.get(), new Item.Properties())));
         }
     }
+
+    public static final Supplier<CreativeModeTab> HBM_DOORS_TAB = CREATIVE_TABS.register(
+            "hbm_doors", () -> CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup.hbmdoors"))
+                    .icon(() -> new ItemStack(ROUND_AIRLOCK_DOOR_ITEM.get()))
+                    .displayItems((parameters, output) -> {
+                        output.accept(ROUND_AIRLOCK_DOOR_ITEM.get());
+                        for (LegacyDoorType type : LegacyDoorType.values()) output.accept(itemFor(type).get());
+                        for (SpecialDoorType type : SpecialDoorType.values()) output.accept(specialItemFor(type).get());
+                    })
+                    .build());
 
     public static final Supplier<BlockEntityType<RoundAirlockDoorBlockEntity>> ROUND_AIRLOCK_DOOR_BE = BLOCK_ENTITIES.register(
             "round_airlock_door", () -> BlockEntityType.Builder.of(RoundAirlockDoorBlockEntity::new, ROUND_AIRLOCK_DOOR.get()).build(null));
@@ -137,16 +150,11 @@ public final class HbmDoorsPort {
     }
 
     public HbmDoorsPort(IEventBus modBus) {
-        BLOCKS.register(modBus); ITEMS.register(modBus); BLOCK_ENTITIES.register(modBus); SOUNDS.register(modBus);
-        modBus.addListener(this::addCreativeTab);
-    }
-
-    private void addCreativeTab(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-            event.accept(ROUND_AIRLOCK_DOOR_ITEM);
-            for (LegacyDoorType type : LegacyDoorType.values()) event.accept(itemFor(type));
-            for (SpecialDoorType type : SpecialDoorType.values()) event.accept(specialItemFor(type));
-        }
+        BLOCKS.register(modBus);
+        ITEMS.register(modBus);
+        BLOCK_ENTITIES.register(modBus);
+        SOUNDS.register(modBus);
+        CREATIVE_TABS.register(modBus);
     }
 
     public static DeferredBlock<LegacyDoorBlock> blockFor(LegacyDoorType type) { return LEGACY_BLOCKS.get(type); }
@@ -159,7 +167,11 @@ public final class HbmDoorsPort {
         switch(type) {
             case TRANSITION_SEAL -> { if(start&&opening){sound=TRANSITION_SEAL_OPEN;volume=6F;} }
             case BLAST_DOOR -> { sound=start?REACTOR_START:REACTOR_STOP; volume=.5F; pitch=start?.75F:1F; }
-            case SLIDING_BLAST_DOOR -> { /* original animation renderer itself had no dedicated movement sample */ }
+            case SLIDING_BLAST_DOOR -> {
+                // HBM 1.12 used qe_sliding_opening while moving, then qe_sliding_opened/shut at the end.
+                sound = start ? QE_OPENING : (opening ? QE_OPENED : QE_SHUT);
+                volume = 2F;
+            }
             case VAULT_DOOR -> { if(start){sound=opening?VAULT_SCRAPE:VAULT_THUD;} }
             case SILO_HATCH -> { if(start){sound=opening?SILO_OPEN:SILO_CLOSE;volume=opening?4F:3F;} }
         }
