@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "hbmdoors:block/door_particles/transition_seal"
+  }
+}
