@@ -44,7 +44,7 @@ public final class HbmDoorsPort {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static final DeferredBlock<RoundAirlockDoorBlock> ROUND_AIRLOCK_DOOR = BLOCKS.registerBlock(
-            "round_airlock_door", RoundAirlockDoorBlock::new, roundAirlockProperties());
+            "round_airlock_door", RoundAirlockDoorBlock::new, uniformDoorProperties());
     public static final DeferredItem<BlockItem> ROUND_AIRLOCK_DOOR_ITEM = ITEMS.register(
             "round_airlock_door", () -> new BlockItem(ROUND_AIRLOCK_DOOR.get(), new Item.Properties()));
 
@@ -55,12 +55,12 @@ public final class HbmDoorsPort {
 
     static {
         for (LegacyDoorType type : LegacyDoorType.values()) {
-            DeferredBlock<LegacyDoorBlock> block = BLOCKS.registerBlock(type.id(), p -> new LegacyDoorBlock(type, p), legacyDoorProperties(type));
+            DeferredBlock<LegacyDoorBlock> block = BLOCKS.registerBlock(type.id(), p -> new LegacyDoorBlock(type, p), uniformDoorProperties());
             LEGACY_BLOCKS.put(type, block);
             LEGACY_ITEMS.put(type, ITEMS.register(type.id(), () -> new BlockItem(block.get(), new Item.Properties())));
         }
         for (SpecialDoorType type : SpecialDoorType.values()) {
-            DeferredBlock<SpecialDoorBlock> block = BLOCKS.registerBlock(type.id(), p -> new SpecialDoorBlock(type, p), heavyDoorProperties(type));
+            DeferredBlock<SpecialDoorBlock> block = BLOCKS.registerBlock(type.id(), p -> new SpecialDoorBlock(type, p), uniformDoorProperties());
             SPECIAL_BLOCKS.put(type, block);
             SPECIAL_ITEMS.put(type, ITEMS.register(type.id(), () -> new BlockItem(block.get(), new Item.Properties())));
         }
@@ -125,59 +125,11 @@ public final class HbmDoorsPort {
         LegacyDoorType.LARGE_VEHICLE.sounds(null, null, ROUND_AIRLOCK_MOVE, null, ROUND_AIRLOCK_STOP, ROUND_AIRLOCK_STOP);
     }
 
-    /** Exact block hardness / blast resistance values from the pinned HBM 1.12.2 fork. */
-    private static BlockBehaviour.Properties roundAirlockProperties() {
-        return metalDoorProperties(100F, 10_000F);
-    }
-
-    private static BlockBehaviour.Properties legacyDoorProperties(LegacyDoorType type) {
-        float hardness = switch (type) {
-            case SLIDING_SEAL -> 10F;
-            case SLIDING_GATE -> 100F;
-            case SECURE_ACCESS -> 200F;
-            case HATCH -> 100F;
-            case FIRE -> 100F;
-            case QE_SLIDING -> 100F;
-            case QE_CONTAINMENT -> 100F;
-            case WATER -> 50F;
-            case LARGE_VEHICLE -> 100F;
-        };
-        float resistance = switch (type) {
-            case SLIDING_SEAL -> 1_000F;
-            case SLIDING_GATE -> 10_000F;
-            case SECURE_ACCESS -> 20_000F;
-            case HATCH -> 1_000F;
-            case FIRE -> 10_000F;
-            case QE_SLIDING -> 1_000F;
-            case QE_CONTAINMENT -> 10_000F;
-            case WATER -> 500F;
-            case LARGE_VEHICLE -> 10_000F;
-        };
-        return metalDoorProperties(hardness, resistance);
-    }
-
-    private static BlockBehaviour.Properties heavyDoorProperties(SpecialDoorType type) {
-        float hardness = switch (type) {
-            case TRANSITION_SEAL -> 1000F;
-            case VAULT_DOOR -> 500F;
-            case BLAST_DOOR -> 250F;
-            case SLIDING_BLAST_DOOR -> 150F;
-            case SILO_HATCH -> 10F;
-        };
-        float resistance = switch (type) {
-            case TRANSITION_SEAL -> 1_000_000F;
-            case VAULT_DOOR -> 36_000F;
-            case BLAST_DOOR -> 18_000F;
-            case SLIDING_BLAST_DOOR -> 7_500F;
-            case SILO_HATCH -> 5_000F;
-        };
-        return metalDoorProperties(hardness, resistance);
-    }
-
-    private static BlockBehaviour.Properties metalDoorProperties(float hardness, float resistance) {
+    /** One gameplay-oriented durability profile shared by every ported HBM door. */
+    private static BlockBehaviour.Properties uniformDoorProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
-                .strength(hardness, resistance)
+                .strength(60F, 1_500F)
                 .requiresCorrectToolForDrops()
                 .noOcclusion()
                 .dynamicShape();
