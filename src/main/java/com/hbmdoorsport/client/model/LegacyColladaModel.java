@@ -68,7 +68,7 @@ public final class LegacyColladaModel {
             // HBM 1.12 multiplied static node matrices directly. Do not decompose them into
             // TRS: after flipMatrix that loses the original translation/pivot basis and shifts
             // nested pieces (especially Transition Seal and Silo Hatch).
-            ps.mulPoseMatrix(n.base);
+            ps.mulPose(n.base);
         }
         Geometry g=geometry.get(n.geometry);
         if(g!=null&&!hidden)g.render(ps.last(),out,light,overlay);
