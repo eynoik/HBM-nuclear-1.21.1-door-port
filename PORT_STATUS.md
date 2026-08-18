@@ -1,7 +1,7 @@
 # Port status
 
 ## 0.3.1-alpha.1
-- Fixed all 15 inventory icons with dedicated 32x32 item textures instead of model-atlas textures.
+- Fixed all 15 inventory icons by moving them back onto a valid item/block atlas sprite (`block_steel`), matching the legacy HBM item-model approach instead of pointing at raw model textures.
 - Fixed Collada triangle rendering for Transition Seal, Sliding Blast Door and Silo Hatch without changing the original DAE files or animation keyframes.
 - Restored original HBM connected Blast Door behavior: horizontally adjacent segments open and close as one connected group.
 - Connected Blast Door redstone is evaluated across the whole group so one powered segment keeps the group open.
