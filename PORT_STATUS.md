@@ -1,5 +1,12 @@
 # Port status
 
+## 0.3.6-alpha.1
+- Restores per-door hardness and blast resistance from the pinned HBM 1.12.2 fork instead of the temporary generic `strength(5, 30)` test values.
+- Round Airlock is now 100 / 10000, Secure Access 200 / 20000, Transition Seal 1000 / 1000000, Vault Door 500 / 36000, and Blast Door is corrected to 250 / 18000.
+- All remaining doors use their original HBM hardness/resistance values as well.
+- All 15 doors now require a correct tool for normal harvesting and are tagged as pickaxe-mineable metal blocks, making hand-breaking deliberately impractical while keeping proper dismantling possible.
+- No animation, sound, access-control, crafting, model or multiblock behavior was changed.
+
 ## 0.3.5-alpha.1
 - Restores empty-hand access behavior from the pinned HBM 1.12.2 fork instead of allowing every door to toggle by hand.
 - The normal `sliding_blast_door` remains empty-hand operable because its original `TileEntitySlidingBlastDoor#canAccess` explicitly allowed unlocked access.
