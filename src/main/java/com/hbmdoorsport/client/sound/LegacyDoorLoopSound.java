@@ -1,6 +1,7 @@
 package com.hbmdoorsport.client.sound;
 
 import com.hbmdoorsport.blockentity.LegacyDoorBlockEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -24,6 +25,13 @@ public final class LegacyDoorLoopSound extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
-        if (door.isRemoved() || !door.isMoving()) stop();
+        Minecraft mc = Minecraft.getInstance();
+        if (door.isRemoved()
+                || mc.level == null
+                || door.getLevel() != mc.level
+                || mc.level.getBlockEntity(door.getBlockPos()) != door
+                || !door.isMoving()) {
+            stop();
+        }
     }
 }
