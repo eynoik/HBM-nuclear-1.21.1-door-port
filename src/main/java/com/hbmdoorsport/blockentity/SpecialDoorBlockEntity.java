@@ -16,6 +16,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Set;
+
 /** Shared state machine for the five special HBM door renderers. */
 public final class SpecialDoorBlockEntity extends BlockEntity {
     public enum DoorState { CLOSED, OPENING, OPEN, CLOSING }
@@ -42,16 +46,67 @@ public final class SpecialDoorBlockEntity extends BlockEntity {
             else if(door.state==DoorState.CLOSING&&door.movementTicks<=0){door.movementTicks=0;door.state=DoorState.CLOSED;door.playSpecialSound(false,false);door.sync();}
 
             SpecialDoorBlock b=(SpecialDoorBlock)door.getBlockState().getBlock(); Direction f=door.getBlockState().getValue(SpecialDoorBlock.FACING);
-            boolean powered=b.anyPartPowered(level,door.worldPosition,f);
+            boolean powered=type==SpecialDoorType.BLAST_DOOR ? door.anyBlastGroupPowered() : b.anyPartPowered(level,door.worldPosition,f);
             if(powered!=door.redstonePower){door.redstonePower=powered;door.setChanged();}
             if(powered&&door.state==DoorState.CLOSED)door.beginOpening(); else if(!powered&&door.state==DoorState.OPEN)door.beginClosing();
         }
     }
 
-    public void tryToggle(){if(level==null||level.isClientSide)return;if(state==DoorState.CLOSED)beginOpening();else if(state==DoorState.OPEN)beginClosing();}
-    public void updateRedstone(boolean p){if(level==null||level.isClientSide||p==redstonePower)return;redstonePower=p;if(p&&state==DoorState.CLOSED)beginOpening();else if(!p&&state==DoorState.OPEN)beginClosing();setChanged();}
-    private void beginOpening(){if(state!=DoorState.CLOSED)return;state=DoorState.OPENING;playSpecialSound(true,true);sync();}
-    private void beginClosing(){if(state!=DoorState.OPEN)return;state=DoorState.CLOSING;playSpecialSound(false,true);sync();}
+    public void tryToggle(){
+        if(level==null||level.isClientSide)return;
+        if(state==DoorState.CLOSED)beginOpening();else if(state==DoorState.OPEN)beginClosing();
+    }
+    public void updateRedstone(boolean p){
+        if(level==null||level.isClientSide)return;
+        if(type()==SpecialDoorType.BLAST_DOOR)p=anyBlastGroupPowered();
+        if(p==redstonePower)return;
+        redstonePower=p;
+        if(p&&state==DoorState.CLOSED)beginOpening();else if(!p&&state==DoorState.OPEN)beginClosing();
+        setChanged();
+    }
+    private void beginOpening(){
+        if(type()==SpecialDoorType.BLAST_DOOR){setBlastGroupState(true);return;}
+        beginOpeningLocal();
+    }
+    private void beginClosing(){
+        if(type()==SpecialDoorType.BLAST_DOOR){setBlastGroupState(false);return;}
+        beginClosingLocal();
+    }
+    private void beginOpeningLocal(){if(state!=DoorState.CLOSED)return;state=DoorState.OPENING;playSpecialSound(true,true);sync();}
+    private void beginClosingLocal(){if(state!=DoorState.OPEN)return;state=DoorState.CLOSING;playSpecialSound(false,true);sync();}
+
+    /** Original HBM Blast Door behavior: all horizontally connected segments move together. */
+    private void setBlastGroupState(boolean opening){
+        if(level==null||level.isClientSide)return;
+        for(SpecialDoorBlockEntity door:blastGroup()) {
+            if(opening)door.beginOpeningLocal(); else door.beginClosingLocal();
+        }
+    }
+
+    /** A group is powered if any connected Blast Door column receives redstone. */
+    private boolean anyBlastGroupPowered(){
+        if(level==null)return false;
+        for(SpecialDoorBlockEntity door:blastGroup()) {
+            SpecialDoorBlock block=(SpecialDoorBlock)door.getBlockState().getBlock();
+            Direction facing=door.getBlockState().getValue(SpecialDoorBlock.FACING);
+            if(block.anyPartPowered(level,door.worldPosition,facing))return true;
+        }
+        return false;
+    }
+
+    private Set<SpecialDoorBlockEntity> blastGroup(){
+        Set<SpecialDoorBlockEntity> result=new HashSet<>();
+        if(level==null||type()!=SpecialDoorType.BLAST_DOOR)return result;
+        Set<BlockPos> seen=new HashSet<>(); ArrayDeque<BlockPos> queue=new ArrayDeque<>(); queue.add(worldPosition);
+        while(!queue.isEmpty()){
+            BlockPos pos=queue.removeFirst(); if(!seen.add(pos))continue;
+            BlockEntity be=level.getBlockEntity(pos);
+            if(!(be instanceof SpecialDoorBlockEntity door)||door.type()!=SpecialDoorType.BLAST_DOOR)continue;
+            result.add(door);
+            queue.add(pos.north());queue.add(pos.south());queue.add(pos.west());queue.add(pos.east());
+        }
+        return result;
+    }
 
     private void playSpecialSound(boolean opening,boolean start){
         if(level==null)return;

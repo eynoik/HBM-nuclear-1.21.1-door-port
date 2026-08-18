@@ -156,7 +156,19 @@ public final class LegacyColladaModel {
 
     private static final class Geometry {
         final List<Vertex> verts; Geometry(List<Vertex> verts){this.verts=verts;}
-        void render(PoseStack.Pose pose,VertexConsumer out,int light,int overlay){for(Vertex v:verts){out.addVertex(pose,v.x,v.y,v.z).setColor(255,255,255,255).setUv(v.u,v.v).setOverlay(overlay).setLight(light).setNormal(pose,v.nx,v.ny,v.nz);}}
+        void render(PoseStack.Pose pose,VertexConsumer out,int light,int overlay){
+            // Entity RenderTypes consume QUADS. The legacy Collada loader produces TRIANGLES.
+            // Emit every triangle as a degenerate quad (A,B,C,C), otherwise Minecraft
+            // stitches vertex 4 from the next triangle into the previous face.
+            for(int i=0;i+2<verts.size();i+=3){
+                Vertex a=verts.get(i), b=verts.get(i+1), c=verts.get(i+2);
+                emit(pose,out,light,overlay,a); emit(pose,out,light,overlay,b);
+                emit(pose,out,light,overlay,c); emit(pose,out,light,overlay,c);
+            }
+        }
+        private static void emit(PoseStack.Pose pose,VertexConsumer out,int light,int overlay,Vertex v){
+            out.addVertex(pose,v.x,v.y,v.z).setColor(255,255,255,255).setUv(v.u,v.v).setOverlay(overlay).setLight(light).setNormal(pose,v.nx,v.ny,v.nz);
+        }
     }
     private record Vertex(float x,float y,float z,float u,float v,float nx,float ny,float nz) { }
 
