@@ -89,7 +89,7 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
-      - name: Publish alpha release
+      - name: Publish alpha pre-release
         if: steps.compile.outcome == 'success' && github.event_name != 'pull_request'
         shell: bash
         env:
@@ -99,11 +99,16 @@ jobs:
           VERSION="$(grep '^mod_version=' gradle.properties | cut -d= -f2-)"
           TAG="v${VERSION}"
           JAR="$(find build/libs -maxdepth 1 -name '*.jar' -type f | head -n 1)"
-          NOTES="NeoForge 1.21.1 alpha of the standalone HBM Nuclear Door Port. Original HBM OBJ/DAE/PNG/OGG assets are preserved; see PORT_STATUS.md for the current runtime fixes."
+          NOTES="NeoForge 1.21.1 pre-release of the standalone HBM Nuclear Door Port. Original HBM OBJ/DAE/PNG/OGG assets are preserved; see PORT_STATUS.md for the current runtime fixes."
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$JAR" --clobber
+            gh release edit "$TAG" \
+              --prerelease \
+              --title "HBM Nuclear Door Port ${VERSION}" \
+              --notes "$NOTES"
           else
             gh release create "$TAG" "$JAR" \
+              --prerelease \
               --title "HBM Nuclear Door Port ${VERSION}" \
               --notes "$NOTES"
           fi
