@@ -96,14 +96,16 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          TAG="v0.3.0-alpha.1"
+          VERSION="$(grep '^mod_version=' gradle.properties | cut -d= -f2-)"
+          TAG="v${VERSION}"
           JAR="$(find build/libs -maxdepth 1 -name '*.jar' -type f | head -n 1)"
+          NOTES="NeoForge 1.21.1 alpha of the standalone HBM Nuclear Door Port. Original HBM OBJ/DAE/PNG/OGG assets are preserved; see PORT_STATUS.md for the current runtime fixes."
           if gh release view "$TAG" >/dev/null 2>&1; then
             gh release upload "$TAG" "$JAR" --clobber
           else
             gh release create "$TAG" "$JAR" \
-              --title "HBM Nuclear Door Port 0.3.0-alpha.1" \
-              --notes "NeoForge 1.21.1 alpha with the 10 OBJ DoorDecl doors plus Transition Seal, Blast Door, Sliding Blast Door, Vault Door and Silo Hatch. Original HBM OBJ/DAE/PNG/OGG assets are preserved."
+              --title "HBM Nuclear Door Port ${VERSION}" \
+              --notes "$NOTES"
           fi
 
       - name: Record CI result in repository
