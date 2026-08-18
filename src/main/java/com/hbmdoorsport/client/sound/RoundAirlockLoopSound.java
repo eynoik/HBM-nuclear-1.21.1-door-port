@@ -2,11 +2,12 @@ package com.hbmdoorsport.client.sound;
 
 import com.hbmdoorsport.HbmDoorsPort;
 import com.hbmdoorsport.blockentity.RoundAirlockDoorBlockEntity;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 
-/** Original HBM garage_move.ogg, but owned by the moving block entity so it can stop immediately. */
+/** Original HBM garage_move.ogg, owned by the live moving block entity. */
 public final class RoundAirlockLoopSound extends AbstractTickableSoundInstance {
     private final RoundAirlockDoorBlockEntity door;
 
@@ -24,7 +25,12 @@ public final class RoundAirlockLoopSound extends AbstractTickableSoundInstance {
 
     @Override
     public void tick() {
-        if (door.isRemoved() || !door.isMoving()) {
+        Minecraft mc = Minecraft.getInstance();
+        if (door.isRemoved()
+                || mc.level == null
+                || door.getLevel() != mc.level
+                || mc.level.getBlockEntity(door.getBlockPos()) != door
+                || !door.isMoving()) {
             stop();
         }
     }
