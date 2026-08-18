@@ -6,7 +6,7 @@
 - Adds the same live-world identity check inside both generic-door and Round Airlock tickable sound instances as a second safety net.
 - Targets lingering loop audio after destroying QE Containment Door, Large Vehicle Door, Round Airlock, Secure Access Door and Fire Door while they are moving.
 - Keeps the server stop-sound cleanup from 0.3.3 as an additional fallback.
-- Successful `main` builds continue to publish automatically as GitHub Pre-releases.
+- Every successful `main` build publishes automatically as a GitHub Pre-release with the compiled JAR attached.
 
 ## 0.3.3-alpha.1
 - Stops HBM door sound samples for nearby clients when an HBM door is broken, preventing positional audio from lingering after the multiblock is removed.
