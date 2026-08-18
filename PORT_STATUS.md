@@ -1,5 +1,11 @@
 # Port status
 
+## 0.3.9-alpha.1
+- Fixes the actual near-bedrock mining-speed bug: all 15 HBM door blocks are now explicitly tagged in `minecraft:mineable/pickaxe`.
+- Retunes every ported door uniformly to hardness 55 and explosion resistance 1300, keeping them only slightly tougher than vanilla obsidian.
+- Keeps `requiresCorrectToolForDrops()` so a proper tool is still required for normal harvesting.
+- No animation, sound, access-control, rendering, crafting or multiblock behavior changes.
+
 ## 0.3.6-alpha.1
 - Restores per-door hardness and blast resistance from the pinned HBM 1.12.2 fork instead of the temporary generic `strength(5, 30)` test values.
 - Round Airlock is now 100 / 10000, Secure Access 200 / 20000, Transition Seal 1000 / 1000000, Vault Door 500 / 36000, and Blast Door is corrected to 250 / 18000.
