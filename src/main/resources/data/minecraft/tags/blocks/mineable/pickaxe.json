@@ -1,0 +1,20 @@
+{
+  "replace": false,
+  "values": [
+    "hbmdoors:round_airlock_door",
+    "hbmdoors:sliding_seal_door",
+    "hbmdoors:sliding_gate_door",
+    "hbmdoors:secure_access_door",
+    "hbmdoors:hatch",
+    "hbmdoors:fire_door",
+    "hbmdoors:qe_sliding_door",
+    "hbmdoors:qe_containment_door",
+    "hbmdoors:water_door",
+    "hbmdoors:large_vehicle_door",
+    "hbmdoors:transition_seal",
+    "hbmdoors:blast_door",
+    "hbmdoors:sliding_blast_door",
+    "hbmdoors:vault_door",
+    "hbmdoors:silo_hatch"
+  ]
+}
