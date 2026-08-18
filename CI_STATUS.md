@@ -1,7 +1,7 @@
 # HBM Door Port CI
 
 - Result: **failure**
-- Source commit: `95c5c2983ea7dd3c440715e5e036d1b074cc27c5`
+- Source commit: `674bb4c2e0ec70441ec7d2f3253eee8a1ae12721`
 - Java: 21
 - Minecraft: 1.21.1
 - NeoForge: 21.1.235
@@ -86,6 +86,6 @@
 	... 30 more
 
 
-BUILD FAILED in 29s
+BUILD FAILED in 28s
 24 actionable tasks: 4 executed, 18 from cache, 2 up-to-date
 ```
