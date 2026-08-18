@@ -1,7 +1,7 @@
 # HBM Door Port CI
 
 - Result: **success**
-- Source commit: `c0a96e2b44bd8c4fa716c789612f4cc5aa59a430`
+- Source commit: `1302e8ba7e724ef70eb0a9366480f2e5345d9388`
 - Java: 21
 - Minecraft: 1.21.1
 - NeoForge: 21.1.235
@@ -33,7 +33,34 @@ Daemon will be stopped at the end of the build
 > Task :neoFormRecompile FROM-CACHE
 > Task :supplyRawJarForneoFormJoined1.21.1-20240808.144430
 > Task :selectRawArtifactNg_dummy_ng.net.neoforged_neoforge_21.1.235
-> Task :compileJava FROM-CACHE
+
+> Task :compileJava
+/home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/src/main/java/com/hbmdoorsport/client/HbmDoorsClientGameEvents.java:11: warning: [removal] bus() in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = HbmDoorsPort.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+                                                                     ^
+/home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/src/main/java/com/hbmdoorsport/client/HbmDoorsClientGameEvents.java:11: warning: [removal] Bus in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = HbmDoorsPort.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME)
+                                                                                             ^
+/home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/src/main/java/com/hbmdoorsport/client/HbmDoorsClient.java:9: warning: [removal] bus() in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = HbmDoorsPort.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+                                                                     ^
+/home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/src/main/java/com/hbmdoorsport/client/HbmDoorsClient.java:9: warning: [removal] Bus in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = HbmDoorsPort.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+                                                                                             ^
+/home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/src/main/java/com/hbmdoorsport/DoorLifecycleEvents.java:27: warning: [removal] bus() in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = HbmDoorsPort.MODID, bus = EventBusSubscriber.Bus.GAME)
+                                                ^
+/home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/src/main/java/com/hbmdoorsport/DoorLifecycleEvents.java:27: warning: [removal] Bus in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = HbmDoorsPort.MODID, bus = EventBusSubscriber.Bus.GAME)
+                                                                        ^
+/home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/src/main/java/com/hbmdoorsport/ManualDoorAccessEvents.java:24: warning: [removal] bus() in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = HbmDoorsPort.MODID, bus = EventBusSubscriber.Bus.GAME)
+                                                ^
+/home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/src/main/java/com/hbmdoorsport/ManualDoorAccessEvents.java:24: warning: [removal] Bus in EventBusSubscriber has been deprecated and marked for removal
+@EventBusSubscriber(modid = HbmDoorsPort.MODID, bus = EventBusSubscriber.Bus.GAME)
+                                                                        ^
+8 warnings
+
 > Task :processResources
 > Task :classes
 > Task :jar
@@ -49,9 +76,11 @@ Daemon will be stopped at the end of the build
 > Task :testJunit NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1787065527825.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1787066279174.json
 
-BUILD SUCCESSFUL in 28s
-29 actionable tasks: 5 executed, 21 from cache, 3 up-to-date
+[Incubating] Problems report is available at: file:///home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/build/reports/problems/problems-report.html
+
+BUILD SUCCESSFUL in 35s
+29 actionable tasks: 6 executed, 20 from cache, 3 up-to-date
 Consider enabling configuration cache to speed up this build: https://docs.gradle.org/9.2.1/userguide/configuration_cache_enabling.html
 ```
