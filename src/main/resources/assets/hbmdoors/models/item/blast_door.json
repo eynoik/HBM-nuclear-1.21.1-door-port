@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "hbmdoors:models/doors/blast/blast_door_block"
+    "layer0": "hbmdoors:block/block_steel"
   }
 }
