@@ -89,8 +89,34 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      - name: Package RAR
+        id: package
+        if: steps.compile.outcome == 'success'
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y rar
+          VERSION="$(grep '^mod_version=' gradle.properties | cut -d= -f2-)"
+          JAR="$(find build/libs -maxdepth 1 -name '*.jar' -type f | head -n 1)"
+          RAR_NAME="HBM-Nuclear-Door-Port-1.21.1-NeoForge-${VERSION}.rar"
+          rar a -idq -ep "$RAR_NAME" "$JAR"
+          test -s "$RAR_NAME"
+          echo "rar=$RAR_NAME" >> "$GITHUB_OUTPUT"
+          echo "jar=$JAR" >> "$GITHUB_OUTPUT"
+          sha256sum "$RAR_NAME"
+
+      - name: Upload RAR package
+        if: steps.package.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: hbm-nuclear-door-port-rar
+          path: ${{ steps.package.outputs.rar }}
+          if-no-files-found: error
+          retention-days: 14
+
       - name: Publish alpha pre-release
-        if: steps.compile.outcome == 'success' && github.event_name != 'pull_request'
+        if: steps.compile.outcome == 'success' && steps.package.outcome == 'success' && github.event_name != 'pull_request'
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
@@ -98,16 +124,17 @@ jobs:
           set -euo pipefail
           VERSION="$(grep '^mod_version=' gradle.properties | cut -d= -f2-)"
           TAG="v${VERSION}"
-          JAR="$(find build/libs -maxdepth 1 -name '*.jar' -type f | head -n 1)"
+          JAR="${{ steps.package.outputs.jar }}"
+          RAR="${{ steps.package.outputs.rar }}"
           NOTES="NeoForge 1.21.1 pre-release of the standalone HBM Nuclear Door Port. Original HBM OBJ/DAE/PNG/OGG assets are preserved; see PORT_STATUS.md for the current runtime fixes."
           if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release upload "$TAG" "$JAR" --clobber
+            gh release upload "$TAG" "$JAR" "$RAR" --clobber
             gh release edit "$TAG" \
               --prerelease \
               --title "HBM Nuclear Door Port ${VERSION}" \
               --notes "$NOTES"
           else
-            gh release create "$TAG" "$JAR" \
+            gh release create "$TAG" "$JAR" "$RAR" \
               --prerelease \
               --title "HBM Nuclear Door Port ${VERSION}" \
               --notes "$NOTES"
@@ -119,12 +146,18 @@ jobs:
         run: |
           set -euo pipefail
           OUTCOME="${{ steps.compile.outcome }}"
+          PACKAGE_OUTCOME="${{ steps.package.outcome }}"
           if [ -z "$OUTCOME" ]; then OUTCOME="not-run"; fi
+          if [ -z "$PACKAGE_OUTCOME" ]; then PACKAGE_OUTCOME="not-run"; fi
+          VERSION="$(grep '^mod_version=' gradle.properties | cut -d= -f2-)"
           {
             echo "# HBM Door Port CI"
             echo
-            echo "- Result: **$OUTCOME**"
+            echo "- Build result: **$OUTCOME**"
+            echo "- RAR package result: **$PACKAGE_OUTCOME**"
             echo "- Source commit: \`${{ github.sha }}\`"
+            echo "- Workflow run ID: \`${{ github.run_id }}\`"
+            echo "- Release tag: \`v${VERSION}\`"
             echo "- Java: 21"
             echo "- Minecraft: 1.21.1"
             echo "- NeoForge: 21.1.235"
