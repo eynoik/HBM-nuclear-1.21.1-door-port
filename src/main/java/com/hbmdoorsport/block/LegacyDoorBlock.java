@@ -101,7 +101,13 @@ public final class LegacyDoorBlock extends BaseEntityBlock {
                 .offset(0, local.y(), 0);
     }
 
+    private boolean hasValidPart(BlockState state) {
+        int part = state.getValue(PART);
+        return part >= 0 && part < type.partCount();
+    }
+
     public BlockPos corePos(BlockPos partPos, BlockState state) {
+        if (!hasValidPart(state)) return partPos;
         LocalPos local = type.part(state.getValue(PART));
         Direction facing = state.getValue(FACING);
         return partPos.relative(facing.getCounterClockWise(), -local.x())
@@ -111,6 +117,7 @@ public final class LegacyDoorBlock extends BaseEntityBlock {
 
     @Nullable
     public LegacyDoorBlockEntity coreEntity(BlockGetter level, BlockPos partPos, BlockState state) {
+        if (!hasValidPart(state)) return null;
         BlockEntity be = level.getBlockEntity(corePos(partPos, state));
         return be instanceof LegacyDoorBlockEntity door ? door : null;
     }
@@ -142,7 +149,7 @@ public final class LegacyDoorBlock extends BaseEntityBlock {
 
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        if (!level.isClientSide && !removingStructure) {
+        if (!level.isClientSide && !removingStructure && hasValidPart(state)) {
             BlockPos core = corePos(pos, state);
             if (!player.isCreative()) popResource(level, core, new ItemStack(HbmDoorsPort.itemFor(type).get()));
             removeAllParts(level, core, state.getValue(FACING), pos);
@@ -152,7 +159,7 @@ public final class LegacyDoorBlock extends BaseEntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!level.isClientSide && !removingStructure && !state.is(newState.getBlock())) {
+        if (!level.isClientSide && !removingStructure && hasValidPart(state) && !state.is(newState.getBlock())) {
             removeAllParts(level, corePos(pos, state), state.getValue(FACING), pos);
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
@@ -186,6 +193,11 @@ public final class LegacyDoorBlock extends BaseEntityBlock {
     }
 
     private VoxelShape collision(BlockState state) {
+        // PART is intentionally broad (0..63) so one shared property can serve every legacy door
+        // type. State-cache mods such as MoreCulling enumerate those synthetic states too, so an
+        // index outside this door type's actual part list must be harmless instead of reaching
+        // LegacyDoorType.part(index) and crashing resource reload.
+        if (!hasValidPart(state)) return Shapes.empty();
         LocalPos local = type.part(state.getValue(PART));
         VoxelShape shape = state.getValue(OPEN_SHAPE) ? type.openShape(local) : type.closedShape(local);
         return rotateShape(shape, state.getValue(FACING));
