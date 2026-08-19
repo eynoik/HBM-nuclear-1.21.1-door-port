@@ -1,7 +1,10 @@
 # HBM Door Port CI
 
-- Result: **success**
-- Source commit: `1302e8ba7e724ef70eb0a9366480f2e5345d9388`
+- Build result: **success**
+- RAR package result: **success**
+- Source commit: `58f035a82657e0b10a0cb5c79f461d67cce698ad`
+- Workflow run ID: `32252119885`
+- Release tag: `v0.3.10-alpha.1`
 - Java: 21
 - Minecraft: 1.21.1
 - NeoForge: 21.1.235
@@ -76,7 +79,7 @@ Daemon will be stopped at the end of the build
 > Task :testJunit NO-SOURCE
 > Task :check UP-TO-DATE
 > Task :build
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1787066279174.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/compile-1787142045076.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/HBM-nuclear-1.21.1-door-port/HBM-nuclear-1.21.1-door-port/build/reports/problems/problems-report.html
 
